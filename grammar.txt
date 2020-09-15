@@ -1,0 +1,31 @@
+                rule
+E  :=  w$        (1)
+    |  w( G E    (2)
+    |  w+ E      (3)
+G :=   w)        (4)
+    |  w)*       (5)
+    |  w( G G    (6)
+    |  w+ G      (7)
+
+  where 'w' is a sequence (possibly empty) of letters and 'char'
+  classes and their iterations. E.g., w = "a[^a-z]*b*"
+
+  token names (types) are numbers from the array: 
+    1   2   3   4   5
+  [ w$, w(, w+, w), w)* ]
+
+
+ iter(con{,class("[[]"),iter(class("[^]]")),class("[]]")}),
+      iter(class("[^[+()]")),
+      plus(ACCEPT,class("[+()]"), con{class("[)]"),class("[*]")})
+
+E1 = [^[+()]          -- e.g. "ala"
+E2 = [[][^]]*[]]   -- e.g. "ala[^ala]"
+E3 = [+)(]?|")*"      -- e.g. "+" or ")*"
+
+   (E1.E2)*E1.E3
+
+{ root=[class|plus|con|iter]
+--      children: [e1,e2,...]
+--      eval: ... (if 'class' this will be a fun: char -> boolean) }
+----------
